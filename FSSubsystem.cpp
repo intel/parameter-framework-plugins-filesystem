@@ -25,7 +25,7 @@
 #include "FSSubsystem.h"
 #include "FSMappingKeys.h"
 #include "SubsystemObjectFactory.h"
-#include "FSSubsystemFile.h"
+#include "FSSubsystemObject.h"
 
 #define base CSubsystem
 
@@ -39,6 +39,5 @@ CFSSubsystem::CFSSubsystem(const string& strName) : base(strName)
     addContextMappingKey("Amend3");
 
     // Provide creators to upper layer
-    addSubsystemObjectFactory(new TSubsystemObjectFactory<CFSSubsystemObject>("Directory", 1 << EFSDirectory));
     addSubsystemObjectFactory(new TSubsystemObjectFactory<CFSSubsystemObject>("File", 1 << EFSDirectory));
 }

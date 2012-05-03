@@ -23,7 +23,6 @@
  * UPDATED: 2012-03-29
  */
 #include <fstream>
-#include <alloca.h>
 #include <string.h>
 #include <sstream>
 #include <stdlib.h>

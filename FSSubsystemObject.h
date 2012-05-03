@@ -52,7 +52,6 @@ protected:
     uint32_t _uiScalarSize;
     uint32_t _uiArraySize;
     string _strFilePath;
-    string _strPath;
     // Delayed error about supported parameter types
     bool _bWrongElementTypeError;
     // Format for reading

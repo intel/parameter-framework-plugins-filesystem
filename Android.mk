@@ -7,8 +7,7 @@ LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/parameter-framework-plugins/
 LOCAL_SRC_FILES := \
     FSSubsystem.cpp \
     FSSubsystemBuilder.cpp \
-    FSSubsystemObject.cpp \
-    FSSubsystemFile.cpp
+    FSSubsystemObject.cpp
 
 LOCAL_CFLAGS := -D_POSIX_SOURCE
 
