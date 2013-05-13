@@ -9,8 +9,6 @@ LOCAL_SRC_FILES := \
     FSSubsystemBuilder.cpp \
     FSSubsystemObject.cpp
 
-LOCAL_CFLAGS := -D_POSIX_SOURCE
-
 LOCAL_MODULE := libfs-subsystem
 
 LOCAL_MODULE_TAGS := optional
