@@ -20,7 +20,6 @@ LOCAL_C_INCLUDES += $(LOCAL_PATH)/../parameter \
 
 LOCAL_C_INCLUDES += \
         external/stlport/stlport/ \
-        bionic/libstdc++ \
         bionic/ \
         vendor/intel/hardware/include
 
