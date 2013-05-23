@@ -37,12 +37,17 @@
 
 const uint32_t STR_FORMAT_LENGTH = 1024;
 
-#define base CSubsystemObject
+#define base CFormattedSubsystemObject
 
 CFSSubsystemObject::CFSSubsystemObject(const string& mappingValue,
                                        CInstanceConfigurableElement* instanceConfigurableElement,
                                        const CMappingContext& context)
-    : base(instanceConfigurableElement), _wrongElementTypeErrorOccured(false), _stringFormat(false)
+    : base(instanceConfigurableElement,
+           mappingValue,
+           EFSAmend1,
+           (EFSAmendEnd - EFSAmend1 + 1),
+           context),
+      _wrongElementTypeErrorOccured(false), _stringFormat(false)
 {
     // Get actual element type
     const CParameterType* parameterType
@@ -53,11 +58,7 @@ CFSSubsystemObject::CFSSubsystemObject(const string& mappingValue,
     _arraySize = instanceConfigurableElement->getFootPrint() / _scalarSize;
 
     // Amend
-    _filePath = context.getItem(EFSDirectory) + "/"
-                + formatMappingValue(mappingValue,
-                                     EFSAmend1,
-                                     (EFSAmendEnd - EFSAmend1 + 1),
-                                     context);
+    _directoryPath = context.getItem(EFSDirectory) + "/";
 
     // Handle types
     // Check we are able to handle elements (no exception support, defer the error)
@@ -91,12 +92,13 @@ bool CFSSubsystemObject::sendToHW(string& error)
     bool success;
 
     // Warning: file emptied upon opening
-    int fileDesc = open(_filePath.c_str(), O_WRONLY | O_TRUNC);
+    string filePath = _directoryPath + getFormattedMappingValue();
+    int fileDesc = open(filePath.c_str(), O_WRONLY | O_TRUNC);
 
     // Check open is successful
     if (fileDesc == -1) {
         stringstream errorStream;
-        errorStream << "Unable to access file " << _filePath << " with error " << errno;
+        errorStream << "Unable to access file " << filePath << " with error " << errno;
         error = errorStream.str();
         return false;
     }
@@ -110,11 +112,12 @@ bool CFSSubsystemObject::sendToHW(string& error)
 bool CFSSubsystemObject::receiveFromHW(string& error)
 {
     bool success;
-    ifstream inputFile(_filePath.c_str());
+    string filePath = _directoryPath + getFormattedMappingValue();
+    ifstream inputFile(filePath.c_str());
 
     if (inputFile.fail()) {
         stringstream errorStream;
-        errorStream << "Unable to open file" << _filePath
+        errorStream << "Unable to open file" << filePath
                     << " with failbit " << (inputFile.rdstate() & ifstream::failbit)
                     << " and badbit " << (inputFile.rdstate() & ifstream::badbit);
         error = errorStream.str();
@@ -133,6 +136,7 @@ bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
     int nbBytes;
     string formatedContent;
     void* blackboardContent = alloca(_scalarSize);
+    string filePath = _directoryPath + getFormattedMappingValue();
 
     for (index = 0 ; index < _arraySize ; index++) {
 
@@ -154,7 +158,7 @@ bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
             // Error when writing
             stringstream errorStream;
             errorStream << "Unable to write element #" << index << "over a total of "
-                        << _arraySize << " elements to file " << _filePath
+                        << _arraySize << " elements to file " << filePath
                         << " with error " << errno;
             error = errorStream.str();
             return false;
@@ -162,7 +166,7 @@ bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
             // Did not write all characters at once
             stringstream errorStream;
             errorStream << "Unable to write element #" << index << "over a total of "
-                        << _arraySize << " elements to file " << _filePath << " at once";
+                        << _arraySize << " elements to file " << filePath << " at once";
             error = errorStream.str();
             return false;
         }
@@ -176,12 +180,13 @@ bool CFSSubsystemObject::receiveFromFile(ifstream& inputFile, string& error)
     uint32_t index;
     char formatedContent[STR_FORMAT_LENGTH];
     void* blackboardContent = alloca(_scalarSize);
+    string filePath = _directoryPath + getFormattedMappingValue();
 
     for (index = 0 ; index < _arraySize ; index++) {
 
         if(!inputFile.good()) {
             stringstream errorStream;
-            errorStream << "Unable to read file" << _filePath
+            errorStream << "Unable to read file" << filePath
                         << " with eofbit " << (inputFile.rdstate() & ifstream::eofbit)
                         << ", failbit " << (inputFile.rdstate() & ifstream::failbit)
                         << " and badbit " << (inputFile.rdstate() & ifstream::badbit);

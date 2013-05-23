@@ -24,11 +24,11 @@
  */
 #pragma once
 
-#include "SubsystemObject.h"
+#include "FormattedSubsystemObject.h"
 
 class CMappingContext;
 
-class CFSSubsystemObject : public CSubsystemObject
+class CFSSubsystemObject : public CFormattedSubsystemObject
 {
 public:
     CFSSubsystemObject(const string& mappingValue,
@@ -117,7 +117,11 @@ protected:
     // Scalar parameter size for elementary access
     uint32_t _scalarSize;
     uint32_t _arraySize;
-    string _filePath;
+    /**
+     * String containing the path of the directory containing the file. It corresponds to the
+     * 'Directory' information fetched from the XML file.
+     */
+    string _directoryPath;
     // Delayed error about supported parameter types
     bool _wrongElementTypeErrorOccured;
     // Format for reading
