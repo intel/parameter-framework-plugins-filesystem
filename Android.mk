@@ -26,7 +26,7 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_C_INCLUDES +=
 
-LOCAL_SHARED_LIBRARIES := libstlport libparameter libcutils
+LOCAL_SHARED_LIBRARIES := libstlport libparameter
 
 LOCAL_LDLIBS +=
 LOCAL_LDFLAGS +=
