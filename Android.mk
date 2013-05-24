@@ -13,7 +13,7 @@ LOCAL_MODULE := libfs-subsystem
 
 LOCAL_MODULE_TAGS := optional
 
-TARGET_ERROR_FLAGS += -Wno-non-virtual-dtor
+LOCAL_CFLAGS += -Wno-non-virtual-dtor
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../parameter \
     $(LOCAL_PATH)/../xmlserializer/
