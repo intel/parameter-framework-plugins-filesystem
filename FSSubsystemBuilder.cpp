@@ -29,7 +29,7 @@
 
 extern "C"
 {
-void getFSSusbystemBuilder(CSubsystemLibrary* pSubsystemLibrary)
+void getFSSubsystemBuilder(CSubsystemLibrary* pSubsystemLibrary)
 {
     pSubsystemLibrary->addElementBuilder(new TNamedElementBuilderTemplate<CFSSubsystem>("FS"));
 }
