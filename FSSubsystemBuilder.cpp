@@ -31,6 +31,6 @@ extern "C"
 {
 void getFSSubsystemBuilder(CSubsystemLibrary* pSubsystemLibrary)
 {
-    pSubsystemLibrary->addElementBuilder(new TNamedElementBuilderTemplate<CFSSubsystem>("FS"));
+    pSubsystemLibrary->addElementBuilder("FS", new TNamedElementBuilderTemplate<CFSSubsystem>());
 }
 }
