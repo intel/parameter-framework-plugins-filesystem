@@ -24,6 +24,7 @@
  */
 #include <fstream>
 #include <string>
+#include <string.h>
 #include <sstream>
 #include <stdlib.h>
 #include <assert.h>
