@@ -36,6 +36,7 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <unistd.h>
 #include "ParameterType.h"
 #include "MappingContext.h"
 #include "FSMappingKeys.h"
