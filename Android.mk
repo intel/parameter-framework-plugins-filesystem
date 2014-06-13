@@ -41,11 +41,10 @@ LOCAL_CFLAGS := \
     -Wextra \
     -Wno-unused-parameter    # Needed to workaround STL bug
 
-LOCAL_C_INCLUDES := \
-    $(LOCAL_PATH)/../../core/parameter \
-    $(LOCAL_PATH)/../../core/xmlserializer \
-
 LOCAL_SHARED_LIBRARIES := libparameter
+LOCAL_STATIC_LIBRARIES := \
+    libparameter_includes \
+    libxmlserializer_includes
 
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/parameter-framework-plugins/Fs
 LOCAL_MODULE_TAGS := optional
