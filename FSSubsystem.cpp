@@ -36,7 +36,7 @@
 #define base CSubsystem
 
 // Implementation
-CFSSubsystem::CFSSubsystem(const string& strName) : base(strName)
+CFSSubsystem::CFSSubsystem(const std::string& strName) : base(strName)
 {
     // Provide mapping keys to upper layer
     addContextMappingKey("Directory");
