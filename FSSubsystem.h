@@ -31,11 +31,12 @@
 #pragma once
 
 #include "Subsystem.h"
+#include <string>
 
 class CFSSubsystem : public CSubsystem
 {
 public:
-    CFSSubsystem(const string& strName);
+    CFSSubsystem(const std::string& strName);
 
 };
 

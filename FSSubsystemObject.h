@@ -31,25 +31,27 @@
 #pragma once
 
 #include "FormattedSubsystemObject.h"
+#include <string>
+#include <fstream>
 
 class CMappingContext;
 
 class CFSSubsystemObject : public CFormattedSubsystemObject
 {
 public:
-    CFSSubsystemObject(const string& mappingValue,
+    CFSSubsystemObject(const std::string& mappingValue,
                        CInstanceConfigurableElement* instanceConfigurableElement,
                        const CMappingContext& context);
 
 protected:
     // from CSubsystemObject
     // Sync to/from HW
-    virtual bool sendToHW(string& error);
-    virtual bool receiveFromHW(string& error);
+    virtual bool sendToHW(std::string& error);
+    virtual bool receiveFromHW(std::string& error);
 
 private:
     // Sync to/from HW
-    virtual bool accessHW(bool receive, string& error);
+    virtual bool accessHW(bool receive, std::string& error);
     /**
       * Read the black board (eventually looping in case of an array),
       * convert the content to ASCII and write it in the file pointed
@@ -68,7 +70,7 @@ private:
       * in one shot is considered as an error though not related to an
       * I/O error.
       */
-    bool sendToFile(int fileDesc, string& error);
+    bool sendToFile(int fileDesc, std::string& error);
     /**
       * Read the file through the ifstream file stream line by line,
       * convert the ASCII value to the black board parameter type and
@@ -82,7 +84,7 @@ private:
       *
       * Typical failures are I/O errors and EOF reached too early.
       */
-    bool receiveFromFile(ifstream& inputFile, string& error);
+    bool receiveFromFile(std::ifstream& inputFile, std::string& error);
     /**
       * Convert the input data to a string.
       *
@@ -99,7 +101,7 @@ private:
       * is any null character in the string, the remaining part of
       * the string is considered as garbage and thus discarded.
       */
-    string toString(const void* inputData, uint32_t size) const;
+    std::string toString(const void* inputData, uint32_t size) const;
     /**
       * Extract data from the input string.
       *
@@ -117,7 +119,7 @@ private:
       * is any null character in the input string, the remaining part of
       * the string is considered as garbage and thus discarded.
       */
-    void fromString(const string& inputString, void* dest, uint32_t size);
+    void fromString(const std::string& inputString, void* dest, uint32_t size);
 
 protected:
     // Scalar parameter size for elementary access
@@ -127,7 +129,7 @@ protected:
      * String containing the path of the directory containing the file. It corresponds to the
      * 'Directory' information fetched from the XML file.
      */
-    string _directoryPath;
+    std::string _directoryPath;
     // Delayed error about supported parameter types
     bool _wrongElementTypeErrorOccured;
     // Format for reading

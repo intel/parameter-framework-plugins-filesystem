@@ -43,6 +43,10 @@
 #include "InstanceConfigurableElement.h"
 #include "FSSubsystemObject.h"
 
+using std::string;
+using std::stringstream;
+using std::ifstream;
+
 const uint32_t STR_FORMAT_LENGTH = 1024;
 
 #define base CFormattedSubsystemObject
