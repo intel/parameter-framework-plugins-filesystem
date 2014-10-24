@@ -46,7 +46,6 @@ LOCAL_STATIC_LIBRARIES := \
     libparameter_includes \
     libxmlserializer_includes
 
-LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/parameter-framework-plugins/Fs
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libfs-subsystem
 LOCAL_MODULE_OWNER := intel
