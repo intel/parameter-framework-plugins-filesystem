@@ -55,6 +55,8 @@ FSSubsystemBuilder.cpp
 FSSubsystem.cpp
 FSSubsystemObject.cpp)
 
+target_link_libraries(fs-subsystem ${PFW_LIBRARIES})
+
 include_directories(${PFW_INCLUDE_DIRS})
 
 install(TARGETS fs-subsystem LIBRARY DESTINATION lib)
