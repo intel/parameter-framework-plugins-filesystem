@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2011-2014, Intel Corporation
+* Copyright (c) 2011-2015, Intel Corporation
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -41,7 +41,8 @@ class CFSSubsystemObject : public CFormattedSubsystemObject
 public:
     CFSSubsystemObject(const std::string& mappingValue,
                        CInstanceConfigurableElement* instanceConfigurableElement,
-                       const CMappingContext& context);
+                       const CMappingContext& context,
+                       core::log::Logger& logger);
 
 protected:
     // from CSubsystemObject

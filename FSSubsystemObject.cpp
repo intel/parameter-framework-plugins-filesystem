@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2011-2014, Intel Corporation
+* Copyright (c) 2011-2015, Intel Corporation
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -53,8 +53,10 @@ const uint32_t STR_FORMAT_LENGTH = 1024;
 
 CFSSubsystemObject::CFSSubsystemObject(const string& mappingValue,
                                        CInstanceConfigurableElement* instanceConfigurableElement,
-                                       const CMappingContext& context)
+                                       const CMappingContext& context,
+                                       core::log::Logger& logger)
     : base(instanceConfigurableElement,
+           logger,
            mappingValue,
            EFSAmend1,
            (EFSAmendEnd - EFSAmend1 + 1),

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2011-2014, Intel Corporation
+* Copyright (c) 2011-2015, Intel Corporation
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -28,15 +28,17 @@
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "SubsystemLibrary.h"
-#include "NamedElementBuilderTemplate.h"
+#include <Plugin.h>
+#include <LoggingElementBuilderTemplate.h>
 #include "FSSubsystem.h"
 
 
 extern "C"
 {
-void getFSSubsystemBuilder(CSubsystemLibrary* pSubsystemLibrary)
+void PARAMETER_FRAMEWORK_PLUGIN_ENTRYPOINT_V1(CSubsystemLibrary* subsystemLibrary,
+                                              core::log::Logger& logger)
 {
-    pSubsystemLibrary->addElementBuilder("FS", new TNamedElementBuilderTemplate<CFSSubsystem>());
+    subsystemLibrary->addElementBuilder("FS",
+                                        new TLoggingElementBuilderTemplate<CFSSubsystem>(logger));
 }
 }
