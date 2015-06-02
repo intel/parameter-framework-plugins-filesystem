@@ -41,7 +41,8 @@ class CFSSubsystemObject : public CFormattedSubsystemObject
 public:
     CFSSubsystemObject(const std::string& mappingValue,
                        CInstanceConfigurableElement* instanceConfigurableElement,
-                       const CMappingContext& context);
+                       const CMappingContext& context,
+                       core::log::Logger& logger);
 
 protected:
     // from CSubsystemObject

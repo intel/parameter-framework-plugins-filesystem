@@ -29,14 +29,15 @@
 */
 
 #include "SubsystemLibrary.h"
-#include "NamedElementBuilderTemplate.h"
+#include "LoggingElementBuilderTemplate.h"
 #include "FSSubsystem.h"
 
 
 extern "C"
 {
-void getFSSubsystemBuilder(CSubsystemLibrary* pSubsystemLibrary)
+void getFSSubsystemBuilder(CSubsystemLibrary* pSubsystemLibrary, core::log::Logger& logger)
 {
-    pSubsystemLibrary->addElementBuilder("FS", new TNamedElementBuilderTemplate<CFSSubsystem>());
+    pSubsystemLibrary->addElementBuilder("FS",
+                                         new TLoggingElementBuilderTemplate<CFSSubsystem>(logger));
 }
 }
