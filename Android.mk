@@ -41,10 +41,7 @@ LOCAL_CFLAGS := \
     -Wextra \
     -Wno-unused-parameter    # Needed to workaround STL bug
 
-LOCAL_SHARED_LIBRARIES := libparameter
-LOCAL_STATIC_LIBRARIES := \
-    libparameter_includes \
-    libxmlserializer_includes
+LOCAL_SHARED_LIBRARIES := libparameter libxmlserializer
 
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libfs-subsystem
