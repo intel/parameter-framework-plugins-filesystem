@@ -36,7 +36,7 @@
 class CFSSubsystem : public CSubsystem
 {
 public:
-    CFSSubsystem(const std::string& strName);
+    CFSSubsystem(const std::string& strName, core::log::Logger& logger);
 
 };
 
