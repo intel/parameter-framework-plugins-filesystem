@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2015, Intel Corporation
+# Copyright (c) 2014-2016, Intel Corporation
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -36,22 +36,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -Wextra")
 #
 # Find PFW libraries and include directories
 #
-find_path(PFW_INCLUDE_ROOT NAMES parameter/plugin/Plugin.h)
-
-find_library(PFW_CORE_LIBRARY NAMES parameter)
-
-set(PFW_INCLUDE_DIRS
-    ${PFW_INCLUDE_ROOT}/parameter/plugin
-    ${PFW_INCLUDE_ROOT}/xmlserializer
-    ${PFW_INCLUDE_ROOT}/utility)
+find_package(ParameterFramework 3 REQUIRED)
 
 add_library(fs-subsystem SHARED
 FSSubsystemBuilder.cpp
 FSSubsystem.cpp
 FSSubsystemObject.cpp)
 
-target_link_libraries(fs-subsystem ${PFW_CORE_LIBRARY})
-
-include_directories(${PFW_INCLUDE_DIRS})
+target_link_libraries(fs-subsystem ParameterFramework::plugin)
 
 install(TARGETS fs-subsystem LIBRARY DESTINATION lib)
