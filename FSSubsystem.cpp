@@ -41,6 +41,7 @@ CFSSubsystem::CFSSubsystem(const std::string& strName, core::log::Logger& logger
 {
     // Provide mapping keys to upper layer
     addContextMappingKey("Directory");
+    addContextMappingKey("Binary");
     addContextMappingKey("Amend1");
     addContextMappingKey("Amend2");
     addContextMappingKey("Amend3");
