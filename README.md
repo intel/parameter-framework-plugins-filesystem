@@ -4,6 +4,20 @@ This is a file system plugin for the
 [parameter-framework](https://github.com/01org/parameter-framework)
 handling file system operations such as `read()` and `write()`.
 
+By default, the plugin reads/writes individual parameters (numerical and
+strings) as strings (one parameter per file or one array per file). This can
+be overriden using the `Binary` mapping key; when added to a parameter or a
+block (ParameterBlock or Component), the plugin reads/writes them in binary
+(in-memory representation). e.g.:
+
+```xml
+<ParameterBlock Name="foo" Mapping="Binary,File:bar">
+    <IntegerParameter .../>
+    <ParameterBlock ...>
+    </ParameterBlock>
+    ...
+</ParameterBlock>
+```
 
 ## Compiling
 

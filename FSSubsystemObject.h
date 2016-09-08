@@ -135,4 +135,6 @@ protected:
     bool _wrongElementTypeErrorOccured;
     // Format for reading
     bool _stringFormat;
+    // Is the object to be written in binary format?
+    bool _isBinary;
 };

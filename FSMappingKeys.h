@@ -33,6 +33,7 @@
 // Mapping item types
 enum FSItemType {
     EFSDirectory,
+    EFSBinary,
     EFSAmend1,
     EFSAmend2,
     EFSAmend3,

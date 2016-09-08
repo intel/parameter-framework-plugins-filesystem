@@ -61,15 +61,15 @@ CFSSubsystemObject::CFSSubsystemObject(const string& mappingValue,
            EFSAmend1,
            (EFSAmendEnd - EFSAmend1 + 1),
            context),
-      _wrongElementTypeErrorOccured(false), _stringFormat(false)
+      _wrongElementTypeErrorOccured(false), _stringFormat(false), _isBinary(context.iSet(EFSBinary))
 {
-    // Get actual element type
-    const CParameterType* parameterType
-            = static_cast<const CParameterType*>(instanceConfigurableElement->getTypeElement());
-
     // Retrieve sizes
-    _scalarSize = parameterType->getSize();
-    _arraySize = instanceConfigurableElement->getFootPrint() / _scalarSize;
+    if (instanceConfigurableElement->isScalar()) {
+        _arraySize = 1;
+    } else {
+        _arraySize = instanceConfigurableElement->getArrayLength();
+    }
+    _scalarSize = instanceConfigurableElement->getFootPrint() / _arraySize;
 
     // Amend
     _directoryPath = context.getItem(EFSDirectory) + "/";
@@ -82,6 +82,15 @@ CFSSubsystemObject::CFSSubsystemObject(const string& mappingValue,
     case CInstanceConfigurableElement::EStringParameter:
         _stringFormat = true;
         break;
+    case CInstanceConfigurableElement::EBitParameterBlock:
+        // fallthrough
+    case CInstanceConfigurableElement::EParameterBlock:
+        // fallthrough
+    case CInstanceConfigurableElement::EComponent:
+        if (not _isBinary) {
+            _wrongElementTypeErrorOccured = true;
+        }
+        break;
     default:
         _wrongElementTypeErrorOccured = true;
         break;
@@ -93,7 +102,13 @@ bool CFSSubsystemObject::accessHW(bool receive, string& error)
     // Check parameter type is ok (deferred error, no exceptions available :-()
     if (_wrongElementTypeErrorOccured) {
 
-        error = "Only Parameter and StringParameter types are supported";
+        if (_isBinary) {
+            error = "Only numerical Parameters, StringParameter, BitParameterBlock, ParameterBlocks"
+                    " and Components are supported in binary mode.";
+        } else {
+            error = "Only Parameter and StringParameter types are supported in string mode (blocks"
+                    " are not).";
+        }
 
         return false;
     }
@@ -147,8 +162,7 @@ bool CFSSubsystemObject::receiveFromHW(string& error)
 bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
 {
     uint32_t index;
-    int nbBytes;
-    string formatedContent;
+    ssize_t expectedWriteSize, actualWriteSize;
     void* blackboardContent = alloca(_scalarSize);
     string filePath = _directoryPath + getFormattedMappingValue();
 
@@ -157,18 +171,23 @@ bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
         // Read Value in BlackBoard
         blackboardRead(blackboardContent, _scalarSize);
 
-        formatedContent = toString(blackboardContent, _scalarSize);
-
         // WARNING: Current C++ STL implementation of fstream operator '<<' cannot
         //          write a string at once: it instead writes the first character and
         //          then the remainining part of the string.
         //          To support sysfs, we need to be able to write the string at once,
         //          thus we use 'write' API.
+        if (_isBinary) {
+            expectedWriteSize = _scalarSize;
+            actualWriteSize = write(fileDesc, blackboardContent, _scalarSize);
+        } else {
+            string formatedContent = toString(blackboardContent, _scalarSize);
+            expectedWriteSize = formatedContent.size();
 
-        // Try to write the entire string
-        nbBytes = write(fileDesc, (const void *)formatedContent.c_str(), formatedContent.size());
+            // Try to write the entire string
+            actualWriteSize = write(fileDesc, (const void *)formatedContent.c_str(), formatedContent.size());
+        }
 
-        if (nbBytes == -1) {
+        if (actualWriteSize == -1) {
             // Error when writing
             stringstream errorStream;
             errorStream << "Unable to write element #" << index << "over a total of "
@@ -176,7 +195,7 @@ bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
                         << " with error " << errno;
             error = errorStream.str();
             return false;
-        } else if (nbBytes != (int)formatedContent.size()) {
+        } else if (actualWriteSize != expectedWriteSize) {
             // Did not write all characters at once
             stringstream errorStream;
             errorStream << "Unable to write element #" << index << "over a total of "
@@ -192,8 +211,7 @@ bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
 bool CFSSubsystemObject::receiveFromFile(ifstream& inputFile, string& error)
 {
     uint32_t index;
-    char formatedContent[STR_FORMAT_LENGTH];
-    void* blackboardContent = alloca(_scalarSize);
+    char blackboardContent[_scalarSize];
     string filePath = _directoryPath + getFormattedMappingValue();
 
     for (index = 0 ; index < _arraySize ; index++) {
@@ -208,9 +226,20 @@ bool CFSSubsystemObject::receiveFromFile(ifstream& inputFile, string& error)
             return false;
         }
 
-        inputFile.getline(formatedContent, STR_FORMAT_LENGTH);
+        if (_isBinary) {
+            auto read = inputFile.readsome(blackboardContent, _scalarSize);
+            if (read != _scalarSize) {
+                stringstream errorStream;
+                errorStream << "Failed to read " << _scalarSize << " bytes from " << filePath;
+                error = errorStream.str();
+                return false;
+            }
+        } else {
+            char formatedContent[STR_FORMAT_LENGTH];
+            inputFile.getline(formatedContent, STR_FORMAT_LENGTH);
 
-        fromString(formatedContent, blackboardContent, _scalarSize);
+            fromString(formatedContent, blackboardContent, _scalarSize);
+        }
 
         // Write Value in Blackboard
         blackboardWrite(blackboardContent, _scalarSize);
