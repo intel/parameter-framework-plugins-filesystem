@@ -1,0 +1,47 @@
+os: linux
+sudo: false
+language: cpp
+compiler:
+    - gcc
+    - clang
+
+env:
+    global:
+        - CMAKE_PREFIX_PATH=$HOME/install
+
+addons:
+    apt:
+        # Travis white list of ppa
+        # https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
+        sources:
+            - ubuntu-toolchain-r-test
+            - george-edison55-precise-backports
+            - llvm-toolchain-precise-3.8
+        # Travis white list of dpkg packages
+        # https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+        packages:
+            - g++-4.8
+            - cmake-data
+            - cmake
+            - clang-format-3.8
+
+before_install:
+    - mkdir $CMAKE_PREFIX_PATH
+
+install:
+    - wget 'https://github.com/01org/parameter-framework/releases/download/v3.2.6/parameter-framework-3.2.6.0-Linux.tar.gz'
+    - tar xf parameter-framework-3.2.6.0-Linux.tar.gz --strip-components=1 -C $CMAKE_PREFIX_PATH
+
+before_script:
+    - export CC=gcc-4.8 CXX=g++-4.8
+
+# how to build
+script:
+    # Check coding style
+    - (git ls-files | grep -E '\.[ch](pp)?$' |  xargs clang-format-3.8 -i &&
+        git diff --exit-code || { git reset --hard; false; })
+
+    - ( mkdir -p build/debug && cd build/debug &&
+        cmake -DCMAKE_BUILD_TYPE=Debug $TRAVIS_BUILD_DIR && make -j$(nproc) )
+    - ( mkdir build/release && cd build &&
+        cmake -DCMAKE_BUILD_TYPE=Release $TRAVIS_BUILD_DIR && make -j$(nproc) )
