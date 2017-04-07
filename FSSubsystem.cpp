@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2011-2015, Intel Corporation
+* Copyright (c) 2011-2017, Intel Corporation
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -36,8 +36,8 @@
 #define base CSubsystem
 
 // Implementation
-CFSSubsystem::CFSSubsystem(const std::string& strName, core::log::Logger& logger) :
-    base(strName, logger)
+CFSSubsystem::CFSSubsystem(const std::string &strName, core::log::Logger &logger)
+    : base(strName, logger)
 {
     // Provide mapping keys to upper layer
     addContextMappingKey("Directory");
@@ -46,5 +46,6 @@ CFSSubsystem::CFSSubsystem(const std::string& strName, core::log::Logger& logger
     addContextMappingKey("Amend3");
 
     // Provide creators to upper layer
-    addSubsystemObjectFactory(new TSubsystemObjectFactory<CFSSubsystemObject>("File", 1 << EFSDirectory));
+    addSubsystemObjectFactory(
+        new TSubsystemObjectFactory<CFSSubsystemObject>("File", 1 << EFSDirectory));
 }

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2011-2015, Intel Corporation
+* Copyright (c) 2011-2017, Intel Corporation
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -39,20 +39,19 @@ class CMappingContext;
 class CFSSubsystemObject : public CFormattedSubsystemObject
 {
 public:
-    CFSSubsystemObject(const std::string& mappingValue,
-                       CInstanceConfigurableElement* instanceConfigurableElement,
-                       const CMappingContext& context,
-                       core::log::Logger& logger);
+    CFSSubsystemObject(const std::string &mappingValue,
+                       CInstanceConfigurableElement *instanceConfigurableElement,
+                       const CMappingContext &context, core::log::Logger &logger);
 
 protected:
     // from CSubsystemObject
     // Sync to/from HW
-    virtual bool sendToHW(std::string& error);
-    virtual bool receiveFromHW(std::string& error);
+    virtual bool sendToHW(std::string &error);
+    virtual bool receiveFromHW(std::string &error);
 
 private:
     // Sync to/from HW
-    virtual bool accessHW(bool receive, std::string& error);
+    virtual bool accessHW(bool receive, std::string &error);
     /**
       * Read the black board (eventually looping in case of an array),
       * convert the content to ASCII and write it in the file pointed
@@ -71,7 +70,7 @@ private:
       * in one shot is considered as an error though not related to an
       * I/O error.
       */
-    bool sendToFile(int fileDesc, std::string& error);
+    bool sendToFile(int fileDesc, std::string &error);
     /**
       * Read the file through the ifstream file stream line by line,
       * convert the ASCII value to the black board parameter type and
@@ -85,7 +84,7 @@ private:
       *
       * Typical failures are I/O errors and EOF reached too early.
       */
-    bool receiveFromFile(std::ifstream& inputFile, std::string& error);
+    bool receiveFromFile(std::ifstream &inputFile, std::string &error);
     /**
       * Convert the input data to a string.
       *
@@ -102,7 +101,7 @@ private:
       * is any null character in the string, the remaining part of
       * the string is considered as garbage and thus discarded.
       */
-    std::string toString(const void* inputData, uint32_t size) const;
+    std::string toString(const void *inputData, uint32_t size) const;
     /**
       * Extract data from the input string.
       *
@@ -120,7 +119,7 @@ private:
       * is any null character in the input string, the remaining part of
       * the string is considered as garbage and thus discarded.
       */
-    void fromString(const std::string& inputString, void* dest, uint32_t size);
+    void fromString(const std::string &inputString, void *dest, uint32_t size);
 
 protected:
     // Scalar parameter size for elementary access

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2011-2015, Intel Corporation
+* Copyright (c) 2011-2017, Intel Corporation
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -51,21 +51,16 @@ const uint32_t STR_FORMAT_LENGTH = 1024;
 
 #define base CFormattedSubsystemObject
 
-CFSSubsystemObject::CFSSubsystemObject(const string& mappingValue,
-                                       CInstanceConfigurableElement* instanceConfigurableElement,
-                                       const CMappingContext& context,
-                                       core::log::Logger& logger)
-    : base(instanceConfigurableElement,
-           logger,
-           mappingValue,
-           EFSAmend1,
-           (EFSAmendEnd - EFSAmend1 + 1),
-           context),
+CFSSubsystemObject::CFSSubsystemObject(const string &mappingValue,
+                                       CInstanceConfigurableElement *instanceConfigurableElement,
+                                       const CMappingContext &context, core::log::Logger &logger)
+    : base(instanceConfigurableElement, logger, mappingValue, EFSAmend1,
+           (EFSAmendEnd - EFSAmend1 + 1), context),
       _wrongElementTypeErrorOccured(false), _stringFormat(false)
 {
     // Get actual element type
-    const CParameterType* parameterType
-            = static_cast<const CParameterType*>(instanceConfigurableElement->getTypeElement());
+    const CParameterType *parameterType =
+        static_cast<const CParameterType *>(instanceConfigurableElement->getTypeElement());
 
     // Retrieve sizes
     _scalarSize = parameterType->getSize();
@@ -76,7 +71,7 @@ CFSSubsystemObject::CFSSubsystemObject(const string& mappingValue,
 
     // Handle types
     // Check we are able to handle elements (no exception support, defer the error)
-    switch(instanceConfigurableElement->getType()) {
+    switch (instanceConfigurableElement->getType()) {
     case CInstanceConfigurableElement::EParameter:
         break;
     case CInstanceConfigurableElement::EStringParameter:
@@ -88,7 +83,7 @@ CFSSubsystemObject::CFSSubsystemObject(const string& mappingValue,
     }
 }
 // Sync to/from HW
-bool CFSSubsystemObject::accessHW(bool receive, string& error)
+bool CFSSubsystemObject::accessHW(bool receive, string &error)
 {
     // Check parameter type is ok (deferred error, no exceptions available :-()
     if (_wrongElementTypeErrorOccured) {
@@ -101,7 +96,7 @@ bool CFSSubsystemObject::accessHW(bool receive, string& error)
     return base::accessHW(receive, error);
 }
 
-bool CFSSubsystemObject::sendToHW(string& error)
+bool CFSSubsystemObject::sendToHW(string &error)
 {
     bool success;
 
@@ -123,7 +118,7 @@ bool CFSSubsystemObject::sendToHW(string& error)
     return success;
 }
 
-bool CFSSubsystemObject::receiveFromHW(string& error)
+bool CFSSubsystemObject::receiveFromHW(string &error)
 {
     bool success;
     string filePath = _directoryPath + getFormattedMappingValue();
@@ -131,9 +126,9 @@ bool CFSSubsystemObject::receiveFromHW(string& error)
 
     if (inputFile.fail()) {
         stringstream errorStream;
-        errorStream << "Unable to open file" << filePath
-                    << " with failbit " << (inputFile.rdstate() & ifstream::failbit)
-                    << " and badbit " << (inputFile.rdstate() & ifstream::badbit);
+        errorStream << "Unable to open file" << filePath << " with failbit "
+                    << (inputFile.rdstate() & ifstream::failbit) << " and badbit "
+                    << (inputFile.rdstate() & ifstream::badbit);
         error = errorStream.str();
         return false;
     }
@@ -144,15 +139,15 @@ bool CFSSubsystemObject::receiveFromHW(string& error)
     return success;
 }
 
-bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
+bool CFSSubsystemObject::sendToFile(int fileDesc, string &error)
 {
     uint32_t index;
     int nbBytes;
     string formatedContent;
-    void* blackboardContent = alloca(_scalarSize);
+    void *blackboardContent = alloca(_scalarSize);
     string filePath = _directoryPath + getFormattedMappingValue();
 
-    for (index = 0 ; index < _arraySize ; index++) {
+    for (index = 0; index < _arraySize; index++) {
 
         // Read Value in BlackBoard
         blackboardRead(blackboardContent, _scalarSize);
@@ -171,16 +166,15 @@ bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
         if (nbBytes == -1) {
             // Error when writing
             stringstream errorStream;
-            errorStream << "Unable to write element #" << index << "over a total of "
-                        << _arraySize << " elements to file " << filePath
-                        << " with error " << errno;
+            errorStream << "Unable to write element #" << index << "over a total of " << _arraySize
+                        << " elements to file " << filePath << " with error " << errno;
             error = errorStream.str();
             return false;
         } else if (nbBytes != (int)formatedContent.size()) {
             // Did not write all characters at once
             stringstream errorStream;
-            errorStream << "Unable to write element #" << index << "over a total of "
-                        << _arraySize << " elements to file " << filePath << " at once";
+            errorStream << "Unable to write element #" << index << "over a total of " << _arraySize
+                        << " elements to file " << filePath << " at once";
             error = errorStream.str();
             return false;
         }
@@ -189,21 +183,21 @@ bool CFSSubsystemObject::sendToFile(int fileDesc, string& error)
     return true;
 }
 
-bool CFSSubsystemObject::receiveFromFile(ifstream& inputFile, string& error)
+bool CFSSubsystemObject::receiveFromFile(ifstream &inputFile, string &error)
 {
     uint32_t index;
     char formatedContent[STR_FORMAT_LENGTH];
-    void* blackboardContent = alloca(_scalarSize);
+    void *blackboardContent = alloca(_scalarSize);
     string filePath = _directoryPath + getFormattedMappingValue();
 
-    for (index = 0 ; index < _arraySize ; index++) {
+    for (index = 0; index < _arraySize; index++) {
 
-        if(!inputFile.good()) {
+        if (!inputFile.good()) {
             stringstream errorStream;
-            errorStream << "Unable to read file" << filePath
-                        << " with eofbit " << (inputFile.rdstate() & ifstream::eofbit)
-                        << ", failbit " << (inputFile.rdstate() & ifstream::failbit)
-                        << " and badbit " << (inputFile.rdstate() & ifstream::badbit);
+            errorStream << "Unable to read file" << filePath << " with eofbit "
+                        << (inputFile.rdstate() & ifstream::eofbit) << ", failbit "
+                        << (inputFile.rdstate() & ifstream::failbit) << " and badbit "
+                        << (inputFile.rdstate() & ifstream::badbit);
             error = errorStream.str();
             return false;
         }
@@ -219,7 +213,7 @@ bool CFSSubsystemObject::receiveFromFile(ifstream& inputFile, string& error)
     return true;
 }
 
-string CFSSubsystemObject::toString(const void* inputData, uint32_t size) const
+string CFSSubsystemObject::toString(const void *inputData, uint32_t size) const
 {
     string outputString;
 
@@ -235,7 +229,7 @@ string CFSSubsystemObject::toString(const void* inputData, uint32_t size) const
         // For type IntegerParameter, size is the size in bytes
         assert(size <= sizeof(outputInt));
 
-        memcpy((void*)&outputInt, inputData, size);
+        memcpy((void *)&outputInt, inputData, size);
 
         // Convert from integer to string
         formatedStream << outputInt;
@@ -251,9 +245,9 @@ string CFSSubsystemObject::toString(const void* inputData, uint32_t size) const
     return outputString;
 }
 
-void CFSSubsystemObject::fromString(const string& inputString, void* dest, uint32_t size)
+void CFSSubsystemObject::fromString(const string &inputString, void *dest, uint32_t size)
 {
-    const void* outputData;
+    const void *outputData;
     string outputString;
     int32_t outputInt;
 
@@ -263,7 +257,7 @@ void CFSSubsystemObject::fromString(const string& inputString, void* dest, uint3
         outputString.resize(size - 1);
 
         // The C string will be at most size-long including null terminating character
-        outputData = (const void*)outputString.c_str();
+        outputData = (const void *)outputString.c_str();
     } else {
         // For type IntegerParameter, size is the size in bytes
         assert(size <= sizeof(outputInt));
@@ -271,7 +265,7 @@ void CFSSubsystemObject::fromString(const string& inputString, void* dest, uint3
         // Extract integer from input string
         stringstream inputStream(inputString);
         inputStream >> outputInt;
-        outputData = (const void*)&outputInt;
+        outputData = (const void *)&outputInt;
     }
 
     memcpy(dest, outputData, size);
